@@ -1,7 +1,8 @@
-A Gradle plugin to manage Android project translations through GetLocalization
+A Gradle plugin to manage Android project translations through GetLocalization.
+**This plugin is not yet available on Maven Central, it can only be built locally**
 
 ## Basic usage
-Just add the plugin to the build dependencies and provide getlocalization account info, the plugin will create a task called "downloadTranslations" to download all the translations which have more than 50% of pprogress (this can be changed by adding the option progress = XX to the getlocalization closure).
+Just add the plugin to the build dependencies and provide getlocalization account info, the plugin will create a task called "downloadTranslations" to download all the translations which have more than 50% of progress (this can be changed by adding the option progress = XX to the getlocalization closure).
 
 ```gradle
 buildscript {
@@ -19,6 +20,12 @@ getlocalization {
     password = "youtpassword"
     project = "projectname"
 }
+```
+
+Then you can just type "gradle downloadTranslations" or add it as a dependency to your release build with:
+
+```gradle
+release.dependsOn downloadTranslations
 ```
 
 ## IANA Codes
