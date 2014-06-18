@@ -1,7 +1,7 @@
 A Gradle plugin to manage Android project translations through GetLocalization
 
 ## Basic usage
-Just add the plugin to the build dependencies and provide getlocalization account info, the plugin will download all the translations which have more than 50% of pprogress (this can be changed by adding the option progress = XX to the getlocalization closure).
+Just add the plugin to the build dependencies and provide getlocalization account info, the plugin will create a task called "downloadTranslations" to download all the translations which have more than 50% of pprogress (this can be changed by adding the option progress = XX to the getlocalization closure).
 
 ```gradle
 buildscript {
@@ -52,3 +52,6 @@ getlocalization {
     iana_codes["pt-BR"] = ["pt,pt-rBR"]
 }
 ```
+
+### TODO
+Translations should be downloaded only if more recent than local file
