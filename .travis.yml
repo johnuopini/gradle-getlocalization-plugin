@@ -1,0 +1,10 @@
+language: groovy
+
+install: ./gradlew clean assemble
+
+branches:
+  only:
+    - master
+    
+env:
+   - TERM=dumb

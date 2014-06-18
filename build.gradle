@@ -1,0 +1,108 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.townsfolk:gradle-release:1.2'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'release'
+
+group = "org.zooper.gradle"
+
+ext.archivesBaseName = 'gradle-getlocalization-plugin'
+ext.isSnapshot = version.endsWith("-SNAPSHOT")
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+}
+
+task sourceJar(type: Jar) {
+    description = 'An archive of the source code for Maven Central'
+    classifier = 'sources'
+    from sourceSets.main.groovy
+}
+
+task groovydocJar(type: Jar) {
+    description = 'An archive of the groovy docs for Maven Central'
+    classifier = 'javadoc'
+    from groovydoc
+}
+
+artifacts {
+    archives groovydocJar, sourceJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+// Only *require* signing if we are uploading a non snapshot version
+gradle.taskGraph.whenReady { taskGraph ->
+    tasks.withType(org.gradle.plugins.signing.Sign).all {
+        required = taskGraph.hasTask(":uploadArchives") && !isSnapshot
+    }
+}
+
+install.repositories.mavenInstaller {
+    pom.project(pomConfiguration)
+    if (signing.signatory) {
+        beforeDeployment { signing.signPom(it) }
+    }
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        if (signing.signatory) {
+            beforeDeployment { signPom(it) }
+        }
+        name = 'mavenCentralReleaseDeployer'
+        repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+            authentication(userName: System.properties['sonatypeUsername'], password: System.properties['sonatypePassword'])
+            releases(updatePolicy: 'always')
+            snapshots(updatePolicy: 'always')
+        }
+        pom.project(pomConfiguration)
+    }
+}
+
+release {
+    createReleaseTag.dependsOn uploadArchives
+}
+
+def getPomConfiguration() {
+    return {
+        name 'Gradle GetLocalization Plugin'
+        packaging 'jar'
+        description 'A Gradle plugin for managing translations through GetLocalization.'
+        url 'https://github.com/johnuopini/gradle-getlocalization-plugin'
+        licenses {
+            license {
+                name 'The MIT License'
+                url 'http://www.opensource.org/licenses/mit-license.php'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'johnuopini'
+                name 'Richard Blaney'
+                email 'johnuopini@gmail.com'
+            }
+        }
+        scm {
+            connection 'scm:https://johnuopini@github.com/johnuopini/gradle-getlocalization-plugin'
+            developerConnection 'scm:git@github.com:johnuopini/gradle-getlocalization-plugin.git'
+            url 'https://github.com/johnuopini/gradle-getlocalization-plugin'
+        }
+    }
+}
