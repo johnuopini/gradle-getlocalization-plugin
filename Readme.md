@@ -1,5 +1,4 @@
 A Gradle plugin to manage Android project translations through GetLocalization.
-**This plugin is not yet available on Maven Central, it can only be built locally**
 
 ## Basic usage
 Just add the plugin to the build dependencies and provide getlocalization account info, the plugin will create a task called "downloadTranslations" to download all the translations which have more than 50% of progress (this can be changed by adding the option progress = XX to the getlocalization closure).
@@ -17,7 +16,7 @@ buildscript {
 apply plugin: 'android-getlocalization'
 getlocalization {
     user = "yourusername"
-    password = "youtpassword"
+    password = "yourpassword"
     project = "projectname"
 }
 ```
@@ -48,17 +47,14 @@ Android does not use the same IANA code format that Get Localization uses and so
   ]
 ```
 
-This means that for example "bg-BG" will be copied to "values-bg" and "no" will be copied to both "values-no" and "values-nb". You can provide your custom mappings in the configuration, for example to download translations with progress > 10% and map Brazilian Portoguese to both Brazilian Portoguese and generic Portoguese you can do this:
+This means that for example "bg-BG" will be copied to "values-bg" and "no" will be copied to both "values-no" and "values-nb". You can provide your custom mappings in the configuration, for example, to download translations with progress > 10% and map Brazilian Portoguese to both Brazilian Portoguese and generic Portoguese you can do this:
 
 ```gradle 
 getlocalization {
     user = "yourusername"
-    password = "youtpassword"
+    password = "yourpassword"
     project = "projectname"
     progress = 10
-    iana_codes["pt-BR"] = ["pt,pt-rBR"]
+    iana_codes["pt-BR"] = "pt,pt-rBR"
 }
 ```
-
-### TODO
-Translations should be downloaded only if more recent than local file
