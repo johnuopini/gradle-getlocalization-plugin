@@ -71,7 +71,7 @@ class GetLocalizationDownloadTask extends DefaultTask {
             }
 
             // Copy (JAVA 7 or newer only)
-            File targetFile = new File(targetDir, t.filename)
+            File targetFile = new File(targetDir, t.filename.replaceAll(".*/", ""))
             Files.copy(tmpFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
 
