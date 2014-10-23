@@ -58,3 +58,14 @@ getlocalization {
     iana_codes["pt-BR"] = "pt,pt-rBR"
 }
 ```
+
+## Master Files
+GetLocalization allows multiple master files, in case you want to download translations referring to only one of these you can do so by specifying the master file in the getlocalization closure, so:
+
+```gradle 
+getlocalization {
+    user = "yourusername"
+    password = "yourpassword"
+    project = "projectname"
+    master = "mystrings.xml" 
+```

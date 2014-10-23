@@ -7,6 +7,7 @@ class GetLocalizationPluginExtension {
   def String user = null
   def String password = null
   def String project = null
+  def String master = null
   def int progress = 50
   def iana_codes = [
     "bg-BG": "bg",

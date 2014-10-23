@@ -21,8 +21,12 @@ class GetLocalizationDownloadTask extends DefaultTask {
     def dowloadTranslations() throws IOException {
         checkConfig()
         getTranslations().each { t ->
-            logger.lifecycle(String.format("Dowloading '%s', progress %s%%", t.iana_code, t.progress))
-            downloadTranslation(t)
+            def master = project.getlocalization.master
+            // If master file was specified then we check if it matches
+            if (master == null || master.equals(t.master_file)) {
+                logger.lifecycle(String.format("Dowloading '%s', progress %s%%", t.iana_code, t.progress))
+                downloadTranslation(t)
+            }
         }
     }
 
