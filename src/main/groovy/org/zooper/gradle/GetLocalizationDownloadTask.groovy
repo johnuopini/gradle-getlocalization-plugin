@@ -46,23 +46,35 @@ class GetLocalizationDownloadTask extends DefaultTask {
         }
 
         // Dump translation
-        def translatedData = new XmlParser().parse(fetchURI(url))
+        def br = fetchURI(url)
+
         tmpFile.withWriter("UTF-8") { out ->
-            out.print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            String line
+            while ((line = br.readLine()) != null) {
+                out.println line
+            }
             out.print String.format("<!-- Translation '%s'->%s, progress %s%%, master '%s' -->\n",
                     t.iana_code, codes, t.progress, t.master_file)
-            out.print "<resources>\n"
-            translatedData.string.each { s ->
-                def String text = s.text()
-                        .replaceAll("&", "&amp;")
-                        .replaceAll("([^\\\\])'", "\\1\\'")
-                        .replaceAll("\\.\\.\\.", "&#8230;")
-                        .replaceAll("<", "&lt;")
-                        .replaceAll(">", "&gt;")
-                out.print String.format("  <string name=\"%s\">%s</string>\n", s.'@name', text)
-            }
-            out.print "</resources>\n"
         }
+
+        // For each code check target dir and copy file over
+        codes.each { code ->
+            def File targetDir = new File(resDir, String.format("values-%s", code.trim()))
+            if (!targetDir.exists()) targetDir.mkdir()
+            if (!targetDir.exists() || !targetDir.isDirectory()) {
+                throw new IOException(
+                        "Target translation directory cannot be created"
+                )
+            }
+
+            // Copy (JAVA 7 or newer only)
+            File targetFile = new File(targetDir, t.filename.replaceAll(".*/", ""))
+            Files.copy(tmpFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
+
+        // All done
+        tmpFile.delete()
+    }
 
         // For each code check target dir and copy file over
         codes.each { code ->
